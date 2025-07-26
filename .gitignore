@@ -5,6 +5,7 @@ venv/
 # 2. Sensitive data files
 data/raw/
 *.pkl
+!models/best_model.pkl
 *.csv
 
 # 3. Python/Jupyter temp files

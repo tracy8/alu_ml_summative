@@ -10,3 +10,7 @@ Many students pick wrong subjects because they don't know their strengths, leadi
 Source: [Kaggle - Students Performance Dataset](https://www.kaggle.com/datasets/rabieelkharoua/students-performance-dataset)
 
 This dataset contains information such as students' gender, parental education level, lunch type, test preparation course, and scores in math, reading, and writing.
+
+
+This is a FastAPI machine learning API that predicts students' academic potential. 
+https://stem-prediction.onrender.com/docs
