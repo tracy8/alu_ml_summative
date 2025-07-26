@@ -1,0 +1,12 @@
+# 1. Virtual environments
+venv/
+.rwanda_stem/
+
+# 2. Sensitive data files
+data/raw/
+*.pkl
+*.csv
+
+# 3. Python/Jupyter temp files
+__pycache__/
+.ipynb_checkpoints/
