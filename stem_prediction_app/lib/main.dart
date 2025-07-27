@@ -5,6 +5,21 @@ import 'package:http/http.dart' as http;
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
+    theme: ThemeData(
+      primarySwatch: Colors.lightBlue,
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.lightBlue,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          padding: EdgeInsets.symmetric(vertical: 14),
+        ),
+      ),
+    ),
     home: PredictionForm(),
   ));
 }
@@ -20,7 +35,6 @@ class _PredictionFormState extends State<PredictionForm> {
   final ageController = TextEditingController();
   final studyTimeController = TextEditingController();
 
-  // Default values
   String gender = 'Male';
   String schoolLocation = 'Urban';
   String parentalEducation = 'Bachelor';
@@ -59,7 +73,7 @@ class _PredictionFormState extends State<PredictionForm> {
       "Sports": sports,
       "Music": music,
       "Volunteering": volunteering,
-      "GradeClass": gradeClass
+      "GradeClass": gradeClass,
     });
 
     try {
@@ -85,13 +99,13 @@ class _PredictionFormState extends State<PredictionForm> {
         }
 
         setState(() {
-          result = "Predicted STEM Potential Score: ${score.toStringAsFixed(2)}\n$interpretation";
+          result = "🎯 Predicted STEM Potential Score: ${score.toStringAsFixed(2)}\n\n$interpretation";
         });
       } else {
-        setState(() => result = "Error: ${response.body}");
+        setState(() => result = " Error: ${response.body}");
       }
     } catch (e) {
-      setState(() => result = "Failed to connect to the API.");
+      setState(() => result = " Failed to connect to the API.");
     } finally {
       setState(() => isLoading = false);
     }
@@ -118,48 +132,80 @@ class _PredictionFormState extends State<PredictionForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("STEM Potential Predictor")),
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text("STEM Potential Predictor", style: TextStyle(fontWeight: FontWeight.bold)),
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: ageController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'Enter your age'),
-                validator: (val) => val == null || int.tryParse(val) == null ? 'Please enter a valid number' : null,
+        padding: const EdgeInsets.all(16.0),
+        child: Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          elevation: 4,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                children: [
+                  TextFormField(
+                    controller: ageController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(labelText: 'Enter your age'),
+                    validator: (val) => val == null || int.tryParse(val) == null ? 'Please enter a valid number' : null,
+                  ),
+                  SizedBox(height: 16),
+                  buildDropdown("Gender", ['Male', 'Female'], gender, (val) => setState(() => gender = val!)),
+                  SizedBox(height: 16),
+                  buildDropdown("Where is your school located?", ['Urban', 'Rural'], schoolLocation, (val) => setState(() => schoolLocation = val!)),
+                  SizedBox(height: 16),
+                  buildDropdown("Parent's highest education level", ['High School', 'Bachelor', 'Master', 'PhD'], parentalEducation, (val) => setState(() => parentalEducation = val!)),
+                  SizedBox(height: 16),
+                  TextFormField(
+                    controller: studyTimeController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(labelText: 'How many hours do you study per week?'),
+                    validator: (val) => val == null || double.tryParse(val) == null ? 'Please enter a valid number' : null,
+                  ),
+                  SizedBox(height: 16),
+                  buildAbsenceDropdown(),
+                  SizedBox(height: 16),
+                  buildDropdown("Do you receive extra tutoring?", ['Yes', 'No'], tutoring, (val) => setState(() => tutoring = val!)),
+                  SizedBox(height: 16),
+                  buildDropdown("Do your parents support your studies?", ['Yes', 'No'], parentalSupport, (val) => setState(() => parentalSupport = val!)),
+                  SizedBox(height: 16),
+                  buildDropdown("Do you participate in extracurricular activities?", ['Yes', 'No'], extracurricular, (val) => setState(() => extracurricular = val!)),
+                  SizedBox(height: 16),
+                  buildDropdown("Do you play any sports?", ['Yes', 'No'], sports, (val) => setState(() => sports = val!)),
+                  SizedBox(height: 16),
+                  buildDropdown("Do you engage in music-related activities?", ['Yes', 'No'], music, (val) => setState(() => music = val!)),
+                  SizedBox(height: 16),
+                  buildDropdown("Do you volunteer?", ['Yes', 'No'], volunteering, (val) => setState(() => volunteering = val!)),
+                  SizedBox(height: 16),
+                  buildDropdown("What was your grade last term?", ['A', 'B', 'C', 'D', 'F'], gradeClass, (val) => setState(() => gradeClass = val!)),
+                  SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: isLoading ? null : predict,
+                    child: isLoading
+                        ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                        : Text('Predict'),
+                  ),
+                  SizedBox(height: 24),
+                  if (result.isNotEmpty)
+                    Container(
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.blue[50],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        result,
+                        style: TextStyle(fontSize: 16, color: Colors.blue[900]),
+                      ),
+                    ),
+                ],
               ),
-              buildDropdown("Gender", ['Male', 'Female'], gender, (val) => setState(() => gender = val!)),
-              buildDropdown("Where is your school located?", ['Urban', 'Rural'], schoolLocation, (val) => setState(() => schoolLocation = val!)),
-              buildDropdown("What is your parent's highest education level?", ['High School', 'Bachelor', 'Master', 'PhD'], parentalEducation, (val) => setState(() => parentalEducation = val!)),
-              TextFormField(
-                controller: studyTimeController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'How many hours do you study per week?'),
-                validator: (val) => val == null || double.tryParse(val) == null ? 'Please enter a valid number' : null,
-              ),
-              buildAbsenceDropdown(),
-              buildDropdown("Do you receive extra tutoring (private or school)?", ['Yes', 'No'], tutoring, (val) => setState(() => tutoring = val!)),
-              buildDropdown("Do your parents support your education?", ['Yes', 'No'], parentalSupport, (val) => setState(() => parentalSupport = val!)),
-              buildDropdown("Do you participate in extracurricular activities?", ['Yes', 'No'], extracurricular, (val) => setState(() => extracurricular = val!)),
-              buildDropdown("Do you play any sports?", ['Yes', 'No'], sports, (val) => setState(() => sports = val!)),
-              buildDropdown("Do you participate in music-related activities?", ['Yes', 'No'], music, (val) => setState(() => music = val!)),
-              buildDropdown("Do you volunteer in any community or school programs?", ['Yes', 'No'], volunteering, (val) => setState(() => volunteering = val!)),
-              buildDropdown("What was your grade last term?", ['A', 'B', 'C', 'D', 'F'], gradeClass, (val) => setState(() => gradeClass = val!)),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: isLoading ? null : predict,
-                child: isLoading ? CircularProgressIndicator(color: Colors.white) : Text('Predict'),
-              ),
-              SizedBox(height: 20),
-              if (result.isNotEmpty)
-                Text(
-                  result,
-                  style: TextStyle(fontSize: 16, color: Colors.blueAccent),
-                ),
-            ],
+            ),
           ),
         ),
       ),
