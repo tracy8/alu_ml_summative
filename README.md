@@ -16,8 +16,11 @@ This is a FastAPI machine learning API that predicts students' academic potentia
 https://stem-prediction.onrender.com/docs
 
 
-Link to the demo
+**Link to Canva demo**
 https://www.canva.com/design/DAGuXzUhaXE/omdNqIgC2BlSV-xqAH5klw/watch?utm_content=DAGuXzUhaXE&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h279152aa7f
+
+**Link to youtube Demo**
+https://youtu.be/7dgtsfjk0m8
 
 # 1. Clone the project
 git clone https://github.com/tracy8/alu_ml_summative.git
