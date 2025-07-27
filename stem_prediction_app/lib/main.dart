@@ -6,14 +6,15 @@ void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
-      primarySwatch: Colors.lightBlue,
+      primarySwatch: Colors.indigo,
+      scaffoldBackgroundColor: Colors.grey[100],
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.lightBlue,
+          backgroundColor: Colors.indigo,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           padding: EdgeInsets.symmetric(vertical: 14),
@@ -79,7 +80,7 @@ class _PredictionFormState extends State<PredictionForm> {
     try {
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: body,
       );
 
@@ -99,13 +100,13 @@ class _PredictionFormState extends State<PredictionForm> {
         }
 
         setState(() {
-          result = "🎯 Predicted STEM Potential Score: ${score.toStringAsFixed(2)}\n\n$interpretation";
+          result = "Predicted STEM Potential Score: ${score.toStringAsFixed(2)}\n\n$interpretation";
         });
       } else {
-        setState(() => result = " Error: ${response.body}");
+        setState(() => result = "Error: ${response.body}");
       }
     } catch (e) {
-      setState(() => result = " Failed to connect to the API.");
+      setState(() => result = "Failed to connect to the API.");
     } finally {
       setState(() => isLoading = false);
     }
@@ -132,22 +133,27 @@ class _PredictionFormState extends State<PredictionForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         centerTitle: true,
         title: Text("STEM Potential Predictor", style: TextStyle(fontWeight: FontWeight.bold)),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
         child: Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          elevation: 4,
+          elevation: 5,
+          color: Colors.white,
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(20),
             child: Form(
               key: _formKey,
-              child: ListView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  Text("Please fill in your academic background to predict your STEM potential.",
+                      style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+                  SizedBox(height: 20),
+
                   TextFormField(
                     controller: ageController,
                     keyboardType: TextInputType.number,
@@ -155,12 +161,16 @@ class _PredictionFormState extends State<PredictionForm> {
                     validator: (val) => val == null || int.tryParse(val) == null ? 'Please enter a valid number' : null,
                   ),
                   SizedBox(height: 16),
+
                   buildDropdown("Gender", ['Male', 'Female'], gender, (val) => setState(() => gender = val!)),
                   SizedBox(height: 16),
+
                   buildDropdown("Where is your school located?", ['Urban', 'Rural'], schoolLocation, (val) => setState(() => schoolLocation = val!)),
                   SizedBox(height: 16),
+
                   buildDropdown("Parent's highest education level", ['High School', 'Bachelor', 'Master', 'PhD'], parentalEducation, (val) => setState(() => parentalEducation = val!)),
                   SizedBox(height: 16),
+
                   TextFormField(
                     controller: studyTimeController,
                     keyboardType: TextInputType.number,
@@ -168,39 +178,49 @@ class _PredictionFormState extends State<PredictionForm> {
                     validator: (val) => val == null || double.tryParse(val) == null ? 'Please enter a valid number' : null,
                   ),
                   SizedBox(height: 16),
+
                   buildAbsenceDropdown(),
                   SizedBox(height: 16),
-                  buildDropdown("Do you receive extra tutoring?", ['Yes', 'No'], tutoring, (val) => setState(() => tutoring = val!)),
+
+                  buildDropdown("Do you receive extra tutoring (e.g., private tutor or school program)?", ['Yes', 'No'], tutoring, (val) => setState(() => tutoring = val!)),
                   SizedBox(height: 16),
+
                   buildDropdown("Do your parents support your studies?", ['Yes', 'No'], parentalSupport, (val) => setState(() => parentalSupport = val!)),
                   SizedBox(height: 16),
+
                   buildDropdown("Do you participate in extracurricular activities?", ['Yes', 'No'], extracurricular, (val) => setState(() => extracurricular = val!)),
                   SizedBox(height: 16),
+
                   buildDropdown("Do you play any sports?", ['Yes', 'No'], sports, (val) => setState(() => sports = val!)),
                   SizedBox(height: 16),
+
                   buildDropdown("Do you engage in music-related activities?", ['Yes', 'No'], music, (val) => setState(() => music = val!)),
                   SizedBox(height: 16),
+
                   buildDropdown("Do you volunteer?", ['Yes', 'No'], volunteering, (val) => setState(() => volunteering = val!)),
                   SizedBox(height: 16),
+
                   buildDropdown("What was your grade last term?", ['A', 'B', 'C', 'D', 'F'], gradeClass, (val) => setState(() => gradeClass = val!)),
                   SizedBox(height: 24),
+
                   ElevatedButton(
                     onPressed: isLoading ? null : predict,
                     child: isLoading
                         ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                        : Text('Predict'),
+                        : Text('Predict', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                   ),
                   SizedBox(height: 24),
+
                   if (result.isNotEmpty)
                     Container(
                       padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.blue[50],
+                        color: Colors.indigo[50],
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         result,
-                        style: TextStyle(fontSize: 16, color: Colors.blue[900]),
+                        style: TextStyle(fontSize: 16, color: Colors.indigo[900]),
                       ),
                     ),
                 ],
