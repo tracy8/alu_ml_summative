@@ -68,12 +68,12 @@ class _PredictionFormState extends State<PredictionForm> {
       "ParentalEducation": parentalEducation,
       "StudyTimeWeekly": double.parse(studyTimeController.text),
       "Absences": absences,
-      "Tutoring": tutoring,
-      "ParentalSupport": parentalSupport,
-      "Extracurricular": extracurricular,
-      "Sports": sports,
-      "Music": music,
-      "Volunteering": volunteering,
+      "Tutoring": tutoring.toLowerCase(),
+      "ParentalSupport": parentalSupport.toLowerCase(),
+      "Extracurricular": extracurricular.toLowerCase(),
+      "Sports": sports.toLowerCase(),
+      "Music": music.toLowerCase(),
+      "Volunteering": volunteering.toLowerCase(),
       "GradeClass": gradeClass,
     });
 
