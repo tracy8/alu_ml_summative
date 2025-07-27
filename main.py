@@ -6,14 +6,21 @@ import numpy as np
 
 app = FastAPI()
 
-# Load your trained model
-model_path = os.path.join("models", "best_model.pkl")
+# Global variable for the model
+model = None
 
-# Define the request schema
+# Load the trained model on startup
+@app.on_event("startup")
+def load_model():
+    global model
+    model_path = os.path.join("models", "best_model.pkl")
+    model = joblib.load(model_path)
+
+# Defined request schema
 class StudentData(BaseModel):
     Age: int
     Gender: str
-    SchoolLocation: str  # ← updated
+    SchoolLocation: str  # updated
     ParentalEducation: str
     StudyTimeWeekly: float
     Absences: int
@@ -25,7 +32,7 @@ class StudentData(BaseModel):
     Volunteering: str
     GradeClass: str
 
-# Convert inputs to numerical values as used in training
+# Converted inputs to numerical values as used in training
 def preprocess(data: StudentData):
     gender_map = {"Male": 0, "Female": 1}
     school_location_map = {"Urban": 1, "Rural": 0}
@@ -36,7 +43,7 @@ def preprocess(data: StudentData):
     return np.array([
         data.Age,
         gender_map.get(data.Gender, 0),
-        school_location_map.get(data.SchoolLocation, 0),  # ← updated
+        school_location_map.get(data.SchoolLocation, 0),
         parental_education_map.get(data.ParentalEducation, 0),
         data.StudyTimeWeekly,
         data.Absences,
