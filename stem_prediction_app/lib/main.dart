@@ -26,6 +26,7 @@ void main() {
 }
 
 class PredictionForm extends StatefulWidget {
+  const PredictionForm({super.key});
   @override
   _PredictionFormState createState() => _PredictionFormState();
 }
@@ -62,20 +63,22 @@ class _PredictionFormState extends State<PredictionForm> {
     final url = Uri.parse('https://stem-prediction.onrender.com/predict');
 
     final body = jsonEncode({
-      "Age": int.parse(ageController.text),
-      "Gender": gender,
-      "SchoolLocation": schoolLocation,
-      "ParentalEducation": parentalEducation,
-      "StudyTimeWeekly": double.parse(studyTimeController.text),
-      "Absences": absences,
-      "Tutoring": tutoring.toLowerCase(),
-      "ParentalSupport": parentalSupport.toLowerCase(),
-      "Extracurricular": extracurricular.toLowerCase(),
-      "Sports": sports.toLowerCase(),
-      "Music": music.toLowerCase(),
-      "Volunteering": volunteering.toLowerCase(),
-      "GradeClass": gradeClass,
-    });
+  "Age": int.parse(ageController.text),
+  "Gender": gender,
+  "SchoolLocation": schoolLocation,
+  "ParentalEducation": parentalEducation,
+  "StudyTimeWeekly": double.parse(studyTimeController.text),
+  "Absences": absences,
+  "Tutoring": tutoring,              
+  "ParentalSupport": parentalSupport,
+  "Extracurricular": extracurricular,
+  "Sports": sports,
+  "Music": music,
+  "Volunteering": volunteering,
+  "GradeClass": gradeClass,
+});
+
+
 
     try {
       final response = await http.post(
@@ -135,7 +138,7 @@ class _PredictionFormState extends State<PredictionForm> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("STEM Potential Predictor", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text("STEM Potential Predictor", style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -150,70 +153,76 @@ class _PredictionFormState extends State<PredictionForm> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text("Please fill in your academic background to predict your STEM potential.",
-                      style: TextStyle(fontSize: 16, color: Colors.grey[700])),
-                  SizedBox(height: 20),
+                  Text(
+                    "Please fill in your academic background to predict your STEM potential.",
+                    style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                  ),
+                  const SizedBox(height: 20),
 
                   TextFormField(
                     controller: ageController,
                     keyboardType: TextInputType.number,
-                    decoration: InputDecoration(labelText: 'Enter your age'),
-                    validator: (val) => val == null || int.tryParse(val) == null ? 'Please enter a valid number' : null,
+                    decoration: const InputDecoration(labelText: 'Enter your age'),
+                    validator: (val) => val == null || int.tryParse(val) == null
+                        ? 'Please enter a valid number'
+                        : null,
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   buildDropdown("Gender", ['Male', 'Female'], gender, (val) => setState(() => gender = val!)),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   buildDropdown("Where is your school located?", ['Urban', 'Rural'], schoolLocation, (val) => setState(() => schoolLocation = val!)),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   buildDropdown("Parent's highest education level", ['High School', 'Bachelor', 'Master', 'PhD'], parentalEducation, (val) => setState(() => parentalEducation = val!)),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   TextFormField(
                     controller: studyTimeController,
                     keyboardType: TextInputType.number,
-                    decoration: InputDecoration(labelText: 'How many hours do you study per week?'),
-                    validator: (val) => val == null || double.tryParse(val) == null ? 'Please enter a valid number' : null,
+                    decoration: const InputDecoration(labelText: 'How many hours do you study per week?'),
+                    validator: (val) => val == null || double.tryParse(val) == null
+                        ? 'Please enter a valid number'
+                        : null,
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   buildAbsenceDropdown(),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   buildDropdown("Do you receive extra tutoring (e.g., private tutor or school program)?", ['Yes', 'No'], tutoring, (val) => setState(() => tutoring = val!)),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   buildDropdown("Do your parents support your studies?", ['Yes', 'No'], parentalSupport, (val) => setState(() => parentalSupport = val!)),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   buildDropdown("Do you participate in extracurricular activities?", ['Yes', 'No'], extracurricular, (val) => setState(() => extracurricular = val!)),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   buildDropdown("Do you play any sports?", ['Yes', 'No'], sports, (val) => setState(() => sports = val!)),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   buildDropdown("Do you engage in music-related activities?", ['Yes', 'No'], music, (val) => setState(() => music = val!)),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   buildDropdown("Do you volunteer?", ['Yes', 'No'], volunteering, (val) => setState(() => volunteering = val!)),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   buildDropdown("What was your grade last term?", ['A', 'B', 'C', 'D', 'F'], gradeClass, (val) => setState(() => gradeClass = val!)),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
                   ElevatedButton(
                     onPressed: isLoading ? null : predict,
                     child: isLoading
-                        ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                        : Text('Predict', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                        ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                        : const Text('Predict', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
                   if (result.isNotEmpty)
                     Container(
-                      padding: EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: Colors.indigo[50],
                         borderRadius: BorderRadius.circular(12),

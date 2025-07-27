@@ -85,7 +85,6 @@ async def predict(data: StudentData):
     processed = preprocess(data)  # This returns a DataFrame
     
     try:
-        # Pass the DataFrame as-is (NOT processed.values)
         prediction = model.predict(processed)[0]
         return {"prediction": round(float(prediction), 2)}
     except Exception as e:
