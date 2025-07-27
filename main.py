@@ -2,16 +2,10 @@ import os
 import numpy as np
 import joblib
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from contextlib import asynccontextmanager
 
-# Declare the app
-app = FastAPI()
-
-# Global variable for the model
-model = None
-
-# Use lifespan instead of deprecated @on_event("startup")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global model
@@ -21,7 +15,19 @@ async def lifespan(app: FastAPI):
     model = joblib.load(model_path)
     yield
 
+# Declare the app with lifespan
 app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Global variable for the model
+model = None
 
 # Request schema
 class StudentData(BaseModel):
