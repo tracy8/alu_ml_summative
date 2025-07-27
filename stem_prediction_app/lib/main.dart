@@ -21,10 +21,10 @@ class _PredictionFormState extends State<PredictionForm> {
   final studyTimeController = TextEditingController();
 
   // Default values
+  String gender = 'Male';
   String schoolLocation = 'Urban';
   String parentalEducation = 'Bachelor';
   int absences = 0;
-
   String tutoring = 'Yes';
   String parentalSupport = 'Yes';
   String extracurricular = 'Yes';
@@ -34,15 +34,21 @@ class _PredictionFormState extends State<PredictionForm> {
   String gradeClass = 'A';
 
   String result = '';
+  bool isLoading = false;
 
   Future<void> predict() async {
     if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      isLoading = true;
+      result = '';
+    });
 
     final url = Uri.parse('https://stem-prediction.onrender.com/predict');
 
     final body = jsonEncode({
       "Age": int.parse(ageController.text),
-      "Gender": "Male", // You can add gender if needed
+      "Gender": gender,
       "SchoolLocation": schoolLocation,
       "ParentalEducation": parentalEducation,
       "StudyTimeWeekly": double.parse(studyTimeController.text),
@@ -86,6 +92,8 @@ class _PredictionFormState extends State<PredictionForm> {
       }
     } catch (e) {
       setState(() => result = "Failed to connect to the API.");
+    } finally {
+      setState(() => isLoading = false);
     }
   }
 
@@ -123,6 +131,7 @@ class _PredictionFormState extends State<PredictionForm> {
                 decoration: InputDecoration(labelText: 'Enter your age'),
                 validator: (val) => val == null || int.tryParse(val) == null ? 'Please enter a valid number' : null,
               ),
+              buildDropdown("Gender", ['Male', 'Female'], gender, (val) => setState(() => gender = val!)),
               buildDropdown("Where is your school located?", ['Urban', 'Rural'], schoolLocation, (val) => setState(() => schoolLocation = val!)),
               buildDropdown("What is your parent's highest education level?", ['High School', 'Bachelor', 'Master', 'PhD'], parentalEducation, (val) => setState(() => parentalEducation = val!)),
               TextFormField(
@@ -140,9 +149,16 @@ class _PredictionFormState extends State<PredictionForm> {
               buildDropdown("Do you volunteer in any community or school programs?", ['Yes', 'No'], volunteering, (val) => setState(() => volunteering = val!)),
               buildDropdown("What was your grade last term?", ['A', 'B', 'C', 'D', 'F'], gradeClass, (val) => setState(() => gradeClass = val!)),
               SizedBox(height: 20),
-              ElevatedButton(onPressed: predict, child: Text('Predict')),
+              ElevatedButton(
+                onPressed: isLoading ? null : predict,
+                child: isLoading ? CircularProgressIndicator(color: Colors.white) : Text('Predict'),
+              ),
               SizedBox(height: 20),
-              Text(result, style: TextStyle(fontSize: 16, color: Colors.blueAccent)),
+              if (result.isNotEmpty)
+                Text(
+                  result,
+                  style: TextStyle(fontSize: 16, color: Colors.blueAccent),
+                ),
             ],
           ),
         ),
